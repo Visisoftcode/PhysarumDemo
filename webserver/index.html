@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Physarum Simulation</title>
+	</head>
+	
+	<body>
+		<div style="display: flex;">
+			<canvas id="canvas" width=768 height=768 style="border: 2px solid #000;"></canvas>
+			
+			<div style="margin-left: 20px;">
+				<input type="checkbox" id="checkbox_0" checked>
+				<label for="checkbox_0">Agent Visiblity</label>
+				<br>
+				<br>
+				<br>
+				<input id="range_0" type="range" min="0.0" max="3.14159" step="0.00001" value="0.78539" oninput="rangeValue0.innerText = this.value;">
+				<p>Sensor angle: <span id="rangeValue0">0.78539</span></p>
+				<input id="range_1" type="range" min="0" max="16.000" step="0.001" value="5.000" oninput="rangeValue1.innerText = this.value;">
+				<p>Sensore range: <span id="rangeValue1">5.000</span></p>
+				<input id="range_2" type="range" min="0.0" max="3.14159" step="0.00001" value="0.31415" oninput="rangeValue2.innerText = this.value;">
+				<p>Angle change: <span id="rangeValue2">0.31415</span></p>
+			</div>
+		</div>
+		
+		<script type="module">
+			import { default as wasm, World } from "./pkg/physarum.js";
+			
+			wasm().then((module) => {
+				let size_w = 24;
+				let size_h = 24;
+				let chunk_size = 32.0;
+				
+				var world = World.new(size_w,size_h,chunk_size,0.25*Math.PI,5.0,0.1*Math.PI);
+				
+				world.spawn_random_agents(700);
+				
+				var canvas = document.getElementById('canvas');
+				canvas.width = size_w*chunk_size;
+				canvas.height = size_h*chunk_size;
+				
+				function loop() {
+					world.update();
+					world.draw();
+				}
+				
+				
+				function set_sensor_angle(elm) {
+					world.set_sensor_angle(elm.srcElement.value);
+				}
+				
+				function set_sensor_range(elm) {
+					world.set_sensor_range(elm.srcElement.value);
+				}
+				
+				function set_angle_change(elm) {
+					world.set_angle_change(elm.srcElement.value);
+				}
+				
+				function set_agent_visiblity(elm) {
+					world.set_agent_visiblity(elm.srcElement.checked);
+				}
+				
+				
+				let range_0 = document.getElementById('range_0');
+				range_0.addEventListener('click',set_sensor_angle);
+				
+				let range_1 = document.getElementById('range_1');
+				range_1.addEventListener('click',set_sensor_range);
+				
+				let range_2 = document.getElementById('range_2');
+				range_2.addEventListener('click',set_angle_change);
+				
+				let checkbox_0 = document.getElementById('checkbox_0');
+				checkbox_0.addEventListener('click',set_agent_visiblity);
+				
+				
+				setInterval(loop,20);
+			});
+		</script>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
